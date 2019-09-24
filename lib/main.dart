@@ -1,0 +1,38 @@
+import 'package:flutter/material.dart';
+import 'package:giver_app/UI/views/qr_scan_view.dart';
+import 'package:giver_app/UI/widgets/category_widget.dart';
+import 'package:giver_app/UI/widgets/coupon_info_item.dart';
+import 'package:giver_app/UI/widgets/pending_coupon_entry.dart';
+import 'package:giver_app/UI/widgets/qr_image.dart';
+import 'package:giver_app/service_locator.dart';
+import 'package:giver_app/services/notification_handler.dart';
+import 'UI/views/sign_in_page.dart';
+
+void main(){
+  setupLocator();
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        // This is the theme of your application.
+        //
+        // Try running your application with "flutter run". You'll see the
+        // application has a blue toolbar. Then, without quitting the app, try
+        // changing the primarySwatch below to Colors.green and then invoke
+        // "hot reload" (press "r" in the console where you ran "flutter run",
+        // or simply save your changes to "hot reloatoand" in a Flutter IDE).
+        // Notice that the counter didn't reset back to zero; the application
+        // is not restarted. 
+        primarySwatch: Colors.blue,
+      ),
+      home: SignInPage()
+    );
+
+  }
+}
