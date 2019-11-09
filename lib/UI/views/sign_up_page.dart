@@ -318,7 +318,7 @@ class _SignUpPageState extends State<SignUpPage> {
 //      Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));// bug when not using inside Scafford
       _formKey.currentState.save();
       try {
-        FirebaseUser user = await FirebaseAuth.instance
+        AuthResult result = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: _email, password: _password)
             .catchError((error) {
           setState(() {
@@ -328,21 +328,21 @@ class _SignUpPageState extends State<SignUpPage> {
           });
           return null;
         });
-        if (user != null) {
-          user.sendEmailVerification();
+        if (result.user != null) {
+          result.user.sendEmailVerification();
           print("send email to-->");
           print(_emailController.text);
           Firestore.instance.runTransaction((Transaction transaction) async {
             CollectionReference reference =
                 Firestore.instance.collection('users');
             if (_selected == 'Customer') {
-              await reference.document(user.uid).setData({
+              await reference.document(result.user.uid).setData({
                 "email": _email,
                 "username": _username,
                 "level": 1,
               });
             } else {
-              await reference.document(user.uid).setData({
+              await reference.document(result.user.uid).setData({
                 "email": _email,
                 "username": _username,
                 "level": 2,

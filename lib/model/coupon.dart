@@ -26,17 +26,18 @@ class Coupon {
 
   });
 
-  Coupon.fromData(Map<String, dynamic> data)
-        : description = data['description'],
-          id = data['id'],
-          ownedBy = data['ownedBy'],
-          usedBy = data['usedBy'],
-          points = data['points'],
-          isUsed = data['isUsed'],
-          isPending = data['isPending'],
-          imageUrl = data['imageUrl'],
-          code = data['code'],
-          time = data['time'];
+  Coupon.fromData(Map<String, dynamic> data){
+    description = data['description'];
+    id = data['id'];
+    ownedBy = data['ownedBy'];
+    usedBy = data['usedBy'];
+    points = data['points'];
+    isUsed = data['isUsed'];
+    isPending = data['isPending'];
+    imageUrl = data['imageUrl'];
+    code = data['code'];
+    time = data['time'];
+  }
 
 
 

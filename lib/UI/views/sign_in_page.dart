@@ -200,14 +200,12 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Future<void> signIn() async {
-    setState(() {
-      _state = ViewState.Busy;
-    });
+
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       try {
         FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-        FirebaseUser user = await firebaseAuth
+        AuthResult result = await firebaseAuth
             .signInWithEmailAndPassword(email: _email, password: _password)
             .catchError((error) {
           setState(() {
@@ -218,14 +216,14 @@ class _SignInPageState extends State<SignInPage> {
             _state = ViewState.DataFetched;
           });
         });
-        if (user.isEmailVerified) {
+        if (result.user.isEmailVerified) {
           Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => HomeView(user: user)));
+              MaterialPageRoute(builder: (context) => HomeView(user: result.user)));
         } else {
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => BlockHomePage(user: user)));
+                  builder: (context) => BlockHomePage(user: result.user)));
         }
       } catch (e) {
         return AlertDialog(
@@ -233,9 +231,6 @@ class _SignInPageState extends State<SignInPage> {
         );
       }
     } else {
-      setState(() {
-        _state = ViewState.DataFetched;
-      });
     }
   }
 

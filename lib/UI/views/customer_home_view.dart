@@ -9,6 +9,7 @@ import 'package:giver_app/UI/widgets/customer_home_widget.dart';
 import 'package:giver_app/UI/shared/text_style.dart';
 import 'package:giver_app/UI/widgets/merchant_item.dart';
 import 'package:giver_app/UI/widgets/merchant_list.dart';
+import 'package:giver_app/blocs/firebase_bloc.dart';
 import 'package:giver_app/enum/view_state.dart';
 import 'package:giver_app/model/coupon.dart';
 import 'package:giver_app/model/user.dart';
@@ -51,23 +52,20 @@ class _CustomerHomeViewState extends State<CustomerHomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseView<UserHomeViewModel>(
-        user: widget.user,
-        builder: (context, child, model) => BusyOverlay(
-          show: model.state == ViewState.Busy,
-          child: MaterialApp(
-            home: DefaultTabController(
-              length: 2,
-              child: Scaffold(
-                    key: scaffoldKey,
-                    appBar: _getAppBar(_selectedTittle, widget.user.points),
-                    drawer: CustomerDrawer(customer: widget.user),
-                    body: _getBodyUi(context, model),
-                    bottomNavigationBar: _getBottomBar(),
-                  ),
-            ),
+    bloc.fetchAllCoupons();
+    bloc.fetchAllMerchants();
+    return MaterialApp(
+          home: DefaultTabController(
+            length: 2,
+            child: Scaffold(
+                  key: scaffoldKey,
+                  appBar: _getAppBar(_selectedTittle, widget.user.points),
+                  drawer: CustomerDrawer(customer: widget.user),
+                  body: _getBodyUi(context),
+                  bottomNavigationBar: _getBottomBar(),
+                ),
           ),
-        ));
+        );
   }
 
   Widget _getAppBar(String title, int points) {
@@ -153,64 +151,67 @@ class _CustomerHomeViewState extends State<CustomerHomeView> {
   }
 
 //switch body widget function
-  Widget _getBodyUi(BuildContext context, UserHomeViewModel model) {
-    switch (model.state) {
-      case ViewState.NoDataAvailable:
-        return _noDataUi(context, model);
-      case ViewState.Error:
-        return _errorUi(context, model);
-      case ViewState.DataFetched:
-        return selectedWidget == WidgetMarker.home
-            ? CustomerHomeWidget(customer: widget.user, coupons: model.getUnusedCoupons(), merchants: model.merchants,
-
-             ):
-            selectedWidget == WidgetMarker.charityOrganizations
-            ? CharityList(model: model,customer: widget.user,):
-            CustomerHistoryView(user: widget.user,);
-      
-      default:
-        return CustomerHomeWidget( customer: widget.user, coupons: model.coupons, merchants: model.merchants, );
-    }
+  Widget _getBodyUi(BuildContext context) {
+//    switch (model.state) {
+//      case ViewState.NoDataAvailable:
+//        return _noDataUi(context, model);
+//      case ViewState.Error:
+//        return _errorUi(context, model);
+//      case ViewState.DataFetched:
+//        return selectedWidget == WidgetMarker.home
+//            ? CustomerHomeWidget(customer: widget.user, coupons: model.getUnusedCoupons(), merchants: model.merchants,
+//
+//             ):
+//            selectedWidget == WidgetMarker.charityOrganizations
+//            ? CharityList(model: model,customer: widget.user,):
+//            CustomerHistoryView(user: widget.user,);
+//
+//      default:
+//        return CustomerHomeWidget( customer: widget.user, coupons: model.coupons, merchants: model.merchants, );
+//    }
+  return CustomerHomeWidget(customer: widget.user, coupons: bloc.allCoupons, merchants: bloc.allMerchants,
+//
+             );
   }
 
 
-  Widget _noDataUi(BuildContext context, UserHomeViewModel model) {
-    return _getCenteredViewMessage(context, "No data available yet", model);
-  }
-
-  Widget _errorUi(BuildContext context, UserHomeViewModel model) {
-    return _getCenteredViewMessage(
-        context, "Error retrieving your data. Tap to try again", model,
-        error: true);
-  }
-
-  Widget _getCenteredViewMessage(
-      BuildContext context, String message, UserHomeViewModel model,
-      {bool error = false}) {
-    return Center(
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  message,
-                  style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.grey),
-                  textAlign: TextAlign.center,
-                ),
-                error
-                    ? Icon(
-                        // WWrap in gesture detector and call you refresh future here
-                        Icons.refresh,
-                        color: Colors.white,
-                        size: 45.0,
-                      )
-                    : Container()
-              ],
-            )));
-  }
+//  Widget _noDataUi(BuildContext context, UserHomeViewModel model) {
+//    return _getCenteredViewMessage(context, "No data available yet", model);
+//  }
+//
+//  Widget _errorUi(BuildContext context, UserHomeViewModel model) {
+//    return _getCenteredViewMessage(
+//        context, "Error retrieving your data. Tap to try again", model,
+//        error: true);
+//  }
+//
+//  Widget _getCenteredViewMessage(
+//      BuildContext context, String message, UserHomeViewModel model,
+//      {bool error = false}) {
+//    return Center(
+//        child: Padding(
+//            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+//            child: Column(
+//              mainAxisSize: MainAxisSize.min,
+//              children: <Widget>[
+//                Text(
+//                  message,
+//                  style: TextStyle(
+//                      fontSize: 20.0,
+//                      fontWeight: FontWeight.w800,
+//                      color: Colors.grey),
+//                  textAlign: TextAlign.center,
+//                ),
+//                error
+//                    ? Icon(
+//                        // WWrap in gesture detector and call you refresh future here
+//                        Icons.refresh,
+//                        color: Colors.white,
+//                        size: 45.0,
+//                      )
+//                    : Container()
+//              ],
+//            )));
+//  }
 
 }
